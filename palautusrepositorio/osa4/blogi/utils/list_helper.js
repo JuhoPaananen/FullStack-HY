@@ -7,7 +7,11 @@ const totalLikes = (blogs) => {
 }
 
 const favoriteBlog = (blogs) => {
-    return blogs.reduce((max, blog) => blog.likes > max.likes ? blog : max, blogs[0])
+    return blogs.reduce((max, blog) => 
+        blog.likes > max.likes 
+            ? blog 
+            : max, 
+        blogs[0])
 }
 
 const mostBlogs = (blogs) => {
@@ -17,7 +21,11 @@ const mostBlogs = (blogs) => {
         return { author: author, blogs: authors.filter(a => a === author).length }
     })
     
-    return authorBlogs.reduce((max, author) => author.blogs > max.blogs ? author : max, authorBlogs[0])
+    return authorBlogs.reduce((max, author) => 
+        author.blogs > max.blogs 
+            ? author 
+            : max, 
+        authorBlogs[0])
 }   
     
 const mostLikes = (blogs) => {
@@ -27,7 +35,11 @@ const mostLikes = (blogs) => {
         return { author: author, likes: blogs.filter(blog => blog.author === author).reduce((sum, blog) => sum + blog.likes, 0) }
     })
     
-    return authorLikes.reduce((max, author) => author.likes > max.likes ? author : max, authorLikes[0])
+    return authorLikes.reduce((max, author) => 
+        author.likes > max.likes 
+            ? author 
+            : max, 
+        authorLikes[0])
 }
 
 
