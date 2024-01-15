@@ -1,0 +1,7 @@
+POST https://localhost:3001/api/login
+Content-Type: application/json
+
+{
+  "username": "jpaa",
+  "password": "vahva12"
+}

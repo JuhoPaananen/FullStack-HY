@@ -3,6 +3,7 @@ const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 const initialBlogs = [
     {
@@ -29,6 +30,10 @@ beforeEach(async () => {
     await blogObject.save()
     blogObject = new Blog(initialBlogs[1])
     await blogObject.save()
+
+    await User.deleteMany({})
+    const user = new User({ username: 'testeri', name: 'Unto Useri', password: 'testpassword' })
+    await user.save()
 })
 
 test('blogs are returned as json', async () => {
