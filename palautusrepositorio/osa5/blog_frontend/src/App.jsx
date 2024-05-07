@@ -46,7 +46,7 @@ const App = () => {
     } catch (exception) {
         showNotification('Wrong credentials');
     }
-  };
+  }
 
   const handleLogout = async (event) => {
     event.preventDefault()
@@ -60,6 +60,18 @@ const App = () => {
     }
   }
 
+  const handleRemoveClick = async (blog) => {
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
+      try {
+          await blogService.remove(blog.id);
+          setBlogs(blogs.filter(b => b.id !== blog.id));
+          showNotification('Blog removed');
+      } catch (error) {
+          showNotification('Failed to delete blog:');
+      }
+    }
+  }
+
   const addBlog = async (blogData) => {
     try {
       const returnedBlog = await blogService.create(blogData);
@@ -69,7 +81,11 @@ const App = () => {
       showNotification('Failed to add blog');
       console.error(error);
     }
-  };
+  }
+
+  const updateBlog = updatedBlog => {
+    setBlogs(blogs.map(blog => blog.id === updatedBlog.id ? updatedBlog : blog))
+  }
 
   if (user === null) {
     return (
@@ -99,8 +115,10 @@ const App = () => {
       </Togglable>
 
       <h2>blogs</h2>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+      {blogs
+      .sort((a, b) => b.likes - a.likes)
+      .map(blog =>
+        <Blog key={blog.id} blog={blog} onUpdate={updateBlog} onRemove={handleRemoveClick.bind(null, blog)} />
       )}
       
     </div>
