@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import blogService from '../services/blogs';
+import { useState } from 'react'
+import blogService from '../services/blogs'
 
 const Blog = ({ blog, onUpdate, onRemove }) => {
   const [detailsVisible, setDetailsVisible] = useState(false)
@@ -7,7 +7,7 @@ const Blog = ({ blog, onUpdate, onRemove }) => {
 
 
   const toggleDetails = () => {
-      setDetailsVisible(!detailsVisible);
+    setDetailsVisible(!detailsVisible)
   }
 
   const blogStyle = {
@@ -36,23 +36,23 @@ const Blog = ({ blog, onUpdate, onRemove }) => {
 
   return (
     <div style={blogStyle}>
+      <div>
+        {blog.title} {blog.author}
+        <button style={buttonStyle} onClick={toggleDetails}>
+          {detailsVisible ? 'hide' : 'view'}
+        </button>
+      </div>
+      {detailsVisible && (
         <div>
-            {blog.title} {blog.author} 
-            <button style={buttonStyle} onClick={toggleDetails}>
-                {detailsVisible ? 'hide' : 'view'}
-            </button>
+          <p>{blog.url}</p>
+          <p>
+            {likes} likes
+            <button style={buttonStyle} onClick={handleLikeClick}>like</button>
+          </p>
+          <p>{blog.user?.name}</p>
+          <button style={buttonStyle} onClick={onRemove}>remove</button>
         </div>
-        {detailsVisible && (
-            <div>
-                <p>{blog.url}</p>
-                <p>
-                  {likes} likes 
-                  <button style={buttonStyle} onClick={handleLikeClick}>like</button>
-                </p>
-                <p>{blog.user?.name}</p>
-                <button style={buttonStyle} onClick={onRemove}>remove</button>
-            </div>
-        )}
+      )}
     </div>
   )
 }

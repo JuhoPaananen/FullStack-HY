@@ -16,7 +16,7 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -37,20 +37,20 @@ const App = () => {
 
   const handleLogin = async (username, password) => {
     try {
-        const user = await loginService.login({
-            username, password,
-        });
-        window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user));
-        setUser(user);
-        showNotification('Logged in successfully');
+      const user = await loginService.login({
+        username, password,
+      })
+      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
+      setUser(user)
+      showNotification('Logged in successfully')
     } catch (exception) {
-        showNotification('Wrong credentials');
+      showNotification('Wrong credentials')
     }
   }
 
   const handleLogout = async (event) => {
     event.preventDefault()
-    
+
     try {
       window.localStorage.removeItem('loggedBlogappUser')
       setUser(null)
@@ -63,23 +63,23 @@ const App = () => {
   const handleRemoveClick = async (blog) => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
       try {
-          await blogService.remove(blog.id);
-          setBlogs(blogs.filter(b => b.id !== blog.id));
-          showNotification('Blog removed');
+        await blogService.remove(blog.id)
+        setBlogs(blogs.filter(b => b.id !== blog.id))
+        showNotification('Blog removed')
       } catch (error) {
-          showNotification('Failed to delete blog:');
+        showNotification('Failed to delete blog:')
       }
     }
   }
 
   const addBlog = async (blogData) => {
     try {
-      const returnedBlog = await blogService.create(blogData);
-      showNotification(`A new blog ${blogData.title} by ${blogData.author} added`);
-      setBlogs(blogs.concat(returnedBlog));
+      const returnedBlog = await blogService.create(blogData)
+      showNotification(`A new blog ${blogData.title} by ${blogData.author} added`)
+      setBlogs(blogs.concat(returnedBlog))
     } catch (error) {
-      showNotification('Failed to add blog');
-      console.error(error);
+      showNotification('Failed to add blog')
+      console.error(error)
     }
   }
 
@@ -102,11 +102,11 @@ const App = () => {
   return (
     <div>
       <h2>Blogs</h2>
-      
+
       <Notification message={errorMessage} />
-      
+
       <div>
-        {user.name} logged in  
+        {user.name} logged in
         <button onClick={handleLogout}>logout</button>
       </div>
 
@@ -116,11 +116,10 @@ const App = () => {
 
       <h2>blogs</h2>
       {blogs
-      .sort((a, b) => b.likes - a.likes)
-      .map(blog =>
-        <Blog key={blog.id} blog={blog} onUpdate={updateBlog} onRemove={handleRemoveClick.bind(null, blog)} />
-      )}
-      
+        .sort((a, b) => b.likes - a.likes)
+        .map(blog =>
+          <Blog key={blog.id} blog={blog} onUpdate={updateBlog} onRemove={handleRemoveClick.bind(null, blog)} />
+        )}
     </div>
   )
 }
