@@ -87,6 +87,17 @@ const App = () => {
     setBlogs(blogs.map(blog => blog.id === updatedBlog.id ? updatedBlog : blog))
   }
 
+  const handleLike = async (blog) => {
+    const updatedBlog = { ...blog, likes: blog.likes + 1 }
+    try {
+      const returnedBlog = await blogService.update(blog.id, updatedBlog)
+      updateBlog(returnedBlog)
+    } catch (error) {
+      showNotification('Failed to like blog')
+      console.error(error)
+    }
+  }
+
   if (user === null) {
     return (
       <div>
@@ -118,7 +129,7 @@ const App = () => {
       {blogs
         .sort((a, b) => b.likes - a.likes)
         .map(blog =>
-          <Blog key={blog.id} blog={blog} onUpdate={updateBlog} onRemove={handleRemoveClick.bind(null, blog)} />
+          <Blog key={blog.id} blog={blog} onLike={() => handleLike(blog)} onRemove={() => handleRemoveClick(blog)} />
         )}
     </div>
   )

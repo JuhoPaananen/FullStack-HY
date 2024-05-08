@@ -3,18 +3,8 @@ import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
 import * as blogService from '../services/blogs'
 
-vi.mock('../services/blogs', () => ({
-  update: vi.fn((id, newObject) => Promise.resolve({
-    ...newObject,
-    user: {
-      username: 'testuser',
-      name: 'Test User'
-    }
-  }))
-}))
-
 describe('Blog component', () => {
-  let blog, onUpdateMock
+  let blog, handleLikeMock
 
   beforeEach(() => {
     blog = {
@@ -27,9 +17,9 @@ describe('Blog component', () => {
         name: 'John Doe'
       }
     }
-    onUpdateMock = vi.fn()
+    handleLikeMock = vi.fn()
 
-    render(<Blog blog={blog} onUpdate={onUpdateMock} onRemove={vi.fn()} />)
+    render(<Blog blog={blog} onLike={handleLikeMock} onRemove={vi.fn()} />)
   })
 
   it('renders only title and author at first', () => {
@@ -38,7 +28,7 @@ describe('Blog component', () => {
     expect(screen.queryByText(`${blog.likes} likes`)).toBeNull()
   })
 
-  it('renders url and likes when view button is clicked', async () => {  
+  it('renders url and likes when view button is clicked', async () => {
     const user = userEvent.setup()
     const button = screen.getByText('view')
     await user.click(button)
@@ -51,10 +41,11 @@ describe('Blog component', () => {
   it('calls onUpdate when the like button is clicked', async () => {
     const user = userEvent.setup()
     await user.click(screen.getByText('view'))
-    screen.debug()
-    await user.click(screen.getByText('like'))
-    screen.debug()
-    expect(blogService.update).toHaveBeenCalledWith(blog.id, { ...blog, likes: blog.likes + 1 })
-    expect(onUpdateMock).toHaveBeenCalled()
+    const likeButton = screen.getByText('like')
+
+    await user.click(likeButton)
+    await user.click(likeButton)
+
+    expect(handleLikeMock).toHaveBeenCalledTimes(2)
   })
 })
