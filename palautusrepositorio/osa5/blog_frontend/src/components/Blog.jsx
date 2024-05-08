@@ -5,7 +5,6 @@ const Blog = ({ blog, onUpdate, onRemove }) => {
   const [detailsVisible, setDetailsVisible] = useState(false)
   const [likes, setLikes] = useState(blog.likes)
 
-
   const toggleDetails = () => {
     setDetailsVisible(!detailsVisible)
   }
