@@ -14,9 +14,9 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )
+    blogService
+      .getAll()
+      .then(blogs => setBlogs(blogs.sort((a, b) => b.likes - a.likes)))
   }, [])
 
   useEffect(() => {
@@ -41,6 +41,7 @@ const App = () => {
         username, password,
       })
       window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
+      blogService.setToken(user.token)
       setUser(user)
       showNotification('Logged in successfully')
     } catch (exception) {
@@ -62,6 +63,10 @@ const App = () => {
 
   const handleRemoveClick = async (blog) => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
+      if (blog.user.username !== user.username) {
+        showNotification('You can only remove blogs added by you')
+        return
+      }
       try {
         await blogService.remove(blog.id)
         setBlogs(blogs.filter(b => b.id !== blog.id))
@@ -75,8 +80,9 @@ const App = () => {
   const addBlog = async (blogData) => {
     try {
       const returnedBlog = await blogService.create(blogData)
-      showNotification(`A new blog ${blogData.title} by ${blogData.author} added`)
+      returnedBlog.user = user
       setBlogs(blogs.concat(returnedBlog))
+      showNotification(`A new blog ${blogData.title} by ${blogData.author} added`)
     } catch (error) {
       showNotification('Failed to add blog')
       console.error(error)
@@ -94,7 +100,6 @@ const App = () => {
       updateBlog(returnedBlog)
     } catch (error) {
       showNotification('Failed to like blog')
-      console.error(error)
     }
   }
 
@@ -129,7 +134,12 @@ const App = () => {
       {blogs
         .sort((a, b) => b.likes - a.likes)
         .map(blog =>
-          <Blog key={blog.id} blog={blog} onLike={() => handleLike(blog)} onRemove={() => handleRemoveClick(blog)} />
+          <Blog
+            key={blog.id}
+            blog={blog} onLike={() => handleLike(blog)}
+            onRemove={() => handleRemoveClick(blog)}
+            user={user}
+          />
         )}
     </div>
   )
