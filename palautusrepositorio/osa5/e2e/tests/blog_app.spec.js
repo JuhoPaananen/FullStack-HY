@@ -1,5 +1,6 @@
 const { test, expect, beforeEach, describe } = require('@playwright/test')
 const { loginWith, addBlog } = require('./helper')
+const blog = require('../../blog_backend/models/blog')
 
 describe('Blogs app', () => {
   beforeEach(async ({ page, request }) => {
@@ -87,27 +88,36 @@ describe('Blogs app', () => {
 
     test('blogs are ordered by likes', async ({ page }) => {
         await addBlog(page, 'Title for testing', 'Jack Russell', 'www.howyoulearnfs.com')
+        await page.waitForSelector('text=Title for testing Jack Russell')
+
         const firstBlog = await page.locator('text=One blog to find them all Frodo Baggins')
         const secondBlog = await page.locator('text=Title for testing Jack Russell')
+
+        expect(firstBlog).toBeTruthy()
+        expect(secondBlog).toBeTruthy()
+
         await firstBlog.locator('text=view').click()
         await page.getByText('like').click()
         await page.waitForSelector('text=1 likes')
         await page.getByText('hide').click()
 
-        const blogs = await page.getByRole('blog')
-        expect(blogs).toHaveCount(2)
-        const mostLikedBlog = blogs[0]
-        expect(mostLikedBlog).toContainText('One blog to find them all Frodo Baggins')
+        const blogTitles = await page.locator('.blog-item').allTextContents()
+
+        // console.log(blogTitles)
+
+        expect(blogTitles[0]).toContain('One blog to find them all Frodo Baggins')
 
         await secondBlog.locator('text=view').click()
         await page.getByText('like').click()
         await page.waitForSelector('text=1 likes')
         await page.getByText('like').click()
         await page.waitForSelector('text=2 likes')
-        page.reload()
-        blogs = await page.getByRole('blog')
-        mostLikedBlog = blogs[0]
-        expect(mostLikedBlog).toContainText('Title for testing Jack Russell')
+        await page.getByText('hide').click()
+
+        const updatedBlogTitles = await page.locator('.blog-item').allTextContents()
+        //console.log(updatedBlogTitles)
+
+        expect(updatedBlogTitles[0]).toContain('Title for testing Jack Russell')
     })
   })
 })

@@ -20,7 +20,7 @@ const Blog = ({ blog, onLike, onRemove, user }) => {
   }
 
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className="blog-item">
       <div>
         {blog.title} {blog.author}
         <button style={buttonStyle} onClick={toggleDetails}>
